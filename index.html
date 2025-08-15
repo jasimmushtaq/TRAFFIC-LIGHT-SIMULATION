@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Traffic Light with Timer & Buttons</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      background: #f0f0f0;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #333;
+      text-align: center;
+    }
+
+    .traffic-light {
+      width: 90%;
+      max-width: 250px;
+      background: #333;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      margin-bottom: 30px;
+    }
+
+    .light-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .light {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #555;
+      transition: background-color 0.5s;
+      flex-shrink: 0;
+    }
+
+    .red.on { background-color: red; }
+    .yellow.on { background-color: yellow; }
+    .green.on { background-color: green; }
+
+    .timer {
+      font-size: 1rem;
+      color: white;
+      width: 40px;
+      text-align: center;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .buttons button {
+      padding: 10px 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: background 0.3s;
+      min-width: 80px;
+    }
+
+    .buttons button.red { background-color: red; color: white; }
+    .buttons button.green { background-color: green; color: white; }
+    .buttons button.yellow { background-color: goldenrod; color: white; }
+
+    .buttons button:hover {
+      opacity: 0.8;
+    }
+
+    .footer {
+      margin-top: auto;
+      font-size: 0.9rem;
+      color: #555;
+      text-align: center;
+      padding: 10px;
+    }
+
+    @media (max-width: 500px) {
+      .light {
+        width: 40px;
+        height: 40px;
+      }
+
+      .timer {
+        font-size: 0.9rem;
+        width: 35px;
+      }
+
+      .buttons button {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+      }
+
+      .title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h4 class="title">TRAFFIC LIGHT SIMULATION</h4>
+
+  <div class="traffic-light">
+    <div class="light-container">
+      <div class="light red" id="red"></div>
+      <div class="timer" id="timer-red">--</div>
+    </div>
+    <div class="light-container">
+      <div class="light yellow" id="yellow"></div>
+      <div class="timer" id="timer-yellow">--</div>
+    </div>
+    <div class="light-container">
+      <div class="light green" id="green"></div>
+      <div class="timer" id="timer-green">--</div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="red" onclick="manualSwitch('red')">Red</button>
+    <button class="green" onclick="manualSwitch('green')">Green</button>
+    <button class="yellow" onclick="manualSwitch('yellow')">Yellow</button>
+  </div>
+
+  <footer class="footer">
+    Created by Jasim Mushtaq © 2025
+  </footer>
+
+  <script>
+    const lights = ['red', 'green', 'yellow'];
+    let index = 0;
+    let countdown = 60;
+    let timerInterval;
+
+    function updateTimers() {
+      lights.forEach(light => {
+        const timer = document.getElementById(`timer-${light}`);
+        timer.textContent = light === lights[index] ? countdown + 's' : '--';
+      });
+    }
+
+    function switchLight(manualColor = null) {
+      lights.forEach(light => {
+        document.getElementById(light).classList.remove('on');
+      });
+
+      index = manualColor ? lights.indexOf(manualColor) : index;
+      const currentLight = lights[index];
+      document.getElementById(currentLight).classList.add('on');
+
+      countdown = 60;
+      updateTimers();
+
+      clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        countdown--;
+        updateTimers();
+        if (countdown === 0) {
+          clearInterval(timerInterval);
+          index = (index + 1) % lights.length;
+          switchLight();
+        }
+      }, 1000);
+    }
+
+    function manualSwitch(color) {
+      index = lights.indexOf(color);
+      switchLight(color);
+    }
+
+    switchLight();
+  </script>
+
+</body>
+</html>
